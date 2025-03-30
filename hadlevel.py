@@ -15,7 +15,7 @@ pygame.display.set_caption("HAD")
 
 # Načtení obrázku jablka
 try:
-    apple_img_path = 'C:/Users/L3oe/Desktop/projekt/jablko.png'
+    apple_img_path = 'jablko.png'
     apple_img = pygame.image.load(apple_img_path)
     apple_img = pygame.transform.scale(apple_img, (CELL_SIZE, CELL_SIZE))
     apple_img_loaded = True
