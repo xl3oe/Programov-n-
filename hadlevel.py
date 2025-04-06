@@ -490,16 +490,26 @@ def draw_game_mode_screen():
         pygame.draw.rect(screen, PURPLE, level_step, border_radius=3)
     
     # Tlačítko levelového módu - větší a s dostatkem prostoru pro text
-    if draw_button("Had na levely", box_x + box_width//2 - 100, level_y, 200, 50,
-                  color=PURPLE, hover_color=(118, 23, 206)):
-        start_game("levels")
+    if logged_in_user:
+        if draw_button("Had na levely", box_x + box_width//2 - 100, level_y, 200, 50,
+                    color=PURPLE, hover_color=(118, 23, 206)):
+            start_game("levels")
+    else:
+        # Pokud uživatel není přihlášen, zobrazíme neaktivní tlačítko s upozorněním
+        button_text = "Pro hraní se přihlašte"
+        button_rect = pygame.Rect(box_x + box_width//2 - 100, level_y, 200, 50)
+        pygame.draw.rect(screen, (80, 80, 90), button_rect, border_radius=10)
+        
+        text_surface = small_font.render(button_text, True, WHITE)
+        text_x = button_rect.centerx - text_surface.get_width() // 2
+        text_y = button_rect.centery - text_surface.get_height() // 2
+        screen.blit(text_surface, (text_x, text_y))
     
     # Tlačítko zpět v dolní části kontejneru - menší a úhledné
     if draw_button("Zpět", box_x + box_width//2 - 60, box_y + box_height - 50, 120, 40,
                   color=(90, 90, 100), hover_color=(70, 70, 80)):
         current_screen = "main"
 
-# Funkce pro zpracování vstupu
 # Funkce pro zpracování vstupu
 def start_input(prompt, callback, is_password=False):
     global input_active, input_text_value, input_prompt, input_callback, current_screen, is_password_field
@@ -510,8 +520,6 @@ def start_input(prompt, callback, is_password=False):
     is_password_field = is_password
     current_screen = "input"
 
-# Vylepšená input obrazovka s moderním designem
-# Vylepšená input obrazovka s moderním designem
 # Vylepšená input obrazovka s moderním designem
 def draw_input_screen():
     global input_text_value, input_callback, current_screen
@@ -1205,21 +1213,15 @@ def start_game(mode):
     
     # Dynamicky určujeme počet buněk podle velikosti obrazovky
     # Použijeme 80% dostupné šířky a 70% dostupné výšky
-    available_width = int(WIDTH * 0.8)
-    available_height = int(HEIGHT * 0.7)
+    # Fixní počet buněk bez ohledu na velikost obrazovky
+    grid_cells_width = 15
+    grid_cells_height = 10
     
-    # Počet buněk - ve fullscreenu více, v normálním režimu základní počet
-    if fullscreen:
-        grid_cells_width = max(15, available_width // used_cell_size)  # Minimálně 15 buněk na šířku
-        grid_cells_height = max(10, available_height // used_cell_size)  # Minimálně 10 buněk na výšku
-    else:
-        grid_cells_width = 15  # Základní počet buněk na šířku
-        grid_cells_height = 10  # Základní počet buněk na výšku
     
     # Skutečné rozměry herní plochy
-    game_width = grid_cells_width * used_cell_size
-    game_height = grid_cells_height * used_cell_size
-    
+    game_width = grid_cells_width * CELL_SIZE
+    game_height = grid_cells_height * CELL_SIZE
+        
     # Centrování herní plochy
     game_area_x = (WIDTH - game_width) // 2
     game_area_y = (HEIGHT - game_height) // 2
@@ -1799,7 +1801,7 @@ def start_game(mode):
                                 (0, y), (WIDTH, y))
             
             # Vytvoření karty pro konec hry
-            card_width, card_height = 500, 350
+            card_width, card_height = 500, 400
             card_x = WIDTH // 2 - card_width // 2
             card_y = HEIGHT // 2 - card_height // 2
             
@@ -1926,15 +1928,12 @@ def start_game(mode):
 
             # Tlačítko pro zobrazení žebříčku - umístěno doprostřed karty, pod hlavními tlačítky
             # OPRAVENO: snížení velikosti tlačítka a centrování uvnitř karty
+            # Tlačítko pro zobrazení žebříčku - umístěno doprostřed karty, pod hlavními tlačítky
             leaderboard_button_y = buttons_y + 70
-            leaderboard_button_width = 300  # Šířka tlačítka žebříčku
-
-            # Ujistíme se, že tlačítko není širší než karta
-            if leaderboard_button_width > card_width - 40:
-                leaderboard_button_width = card_width - 40
+            leaderboard_button_width = card_width - 40  # Šířka tlačítka přes celou kartu s odsazením
 
             if draw_button("Zobrazit žebříček", 
-                        card_x + card_width//2 - leaderboard_button_width//2, 
+                        card_x + 20,  # Zarovnání doleva s odsazením 
                         leaderboard_button_y, 
                         leaderboard_button_width, 50,
                         color=(52, 152, 219), hover_color=(41, 128, 185)):
@@ -1957,14 +1956,15 @@ def start_game(mode):
             # Funkce pro přepnutí fullscreen
 # Funkce pro přepnutí fullscreen
 def toggle_fullscreen():
-    global fullscreen, WIDTH, HEIGHT, screen, current_screen
+    global fullscreen, WIDTH, HEIGHT, screen, current_screen, CELL_SIZE
     fullscreen = not fullscreen
     
     if fullscreen:
         temp_surf = screen.copy()  # Uložíme aktuální obsah obrazovky
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         WIDTH, HEIGHT = screen.get_size()  # Aktualizace rozměrů
-        screen.blit(temp_surf, (0, 0))  # Obnovíme obsah obrazovky
+        CELL_SIZE *= 2  # Zvětšíme velikost buňky na dvojnásobek
+        screen.blit(pygame.transform.scale(temp_surf, (WIDTH, HEIGHT)), (0, 0))  # Obnovíme obsah obrazovky se změněnou velikostí
         
         # Přeinicializujeme hvězdy pro novou velikost obrazovky
         initialize_stars()
@@ -1972,12 +1972,13 @@ def toggle_fullscreen():
         temp_surf = screen.copy()  # Uložíme aktuální obsah obrazovky
         screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
         WIDTH, HEIGHT = 800, 600  # Vrátíme zpět výchozí rozměry
-        screen.blit(temp_surf, (0, 0))  # Obnovíme obsah obrazovky
+        CELL_SIZE = 40  # Vrátíme velikost buňky na původní hodnotu
+        screen.blit(pygame.transform.scale(temp_surf, (WIDTH, HEIGHT)), (0, 0))  # Obnovíme obsah obrazovky se změněnou velikostí
         
         # Přeinicializujeme hvězdy pro novou velikost obrazovky
         initialize_stars()
         
-    print(f"Fullscreen: {fullscreen}, Rozměry: {WIDTH}x{HEIGHT}")
+    print(f"Fullscreen: {fullscreen}, Rozměry: {WIDTH}x{HEIGHT}, Velikost buňky: {CELL_SIZE}")
     
     # Pokud jsme ve hře, restartujeme ji při změně režimu
     if current_screen == "game":
