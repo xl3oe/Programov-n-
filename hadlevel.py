@@ -120,11 +120,6 @@ def create_user_table():
             print(f"Chyba při vytváření tabulky: {err}")
 
 # Funkce pro vykreslení tlačítek
-# Funkce pro vykreslení tlačítek - moderní design
-# Funkce pro vykreslení tlačítek - moderní design s ošetřením hodnot barev
-# Funkce pro vykreslení tlačítek - upravená pro správnou velikost textu a umístění
-# Funkce pro vykreslení tlačítek - modernizovaná s konzistentním stínováním a fonty
-# Komplexně přepracovaná funkce pro vykreslení tlačítek - bez stínů, s kontrolou šířky textu
 def draw_button(text, x, y, width, height, action=None, color=BUTTON_COLOR, hover_color=BUTTON_HOVER):
     global button_cooldown, screen
     
@@ -217,10 +212,7 @@ def draw_stars():
         # Vykreslení hvězdy jako kroužku
         pygame.draw.circle(screen, (255, 255, 255), (int(star["x"]), int(star["y"])), star["size"])
 
-# Funkce pro zobrazení informací o přihlášeném uživateli - vylepšený design
-# Funkce pro zobrazení informací o přihlášeném uživateli - vylepšený design s tlačítkem "Změnit heslo"
-# Funkce pro zobrazení informací o přihlášeném uživateli - nový design s oddělenými tlačítky
-# Funkce pro zobrazení informací o přihlášeném uživateli - nový design s oddělenými tlačítky
+# Funkce pro zobrazení informací o přihlášeném uživateli
 def draw_login_info():
     global logged_in_user, current_screen
     
@@ -252,7 +244,6 @@ def logout():
     print("Uživatel byl odhlášen")
 
 # Funkce pro zobrazení hlavní obrazovky
-# Funkce pro zobrazení hlavní obrazovky - moderní design
 def draw_main_screen():
     # Pozadí s gradientem
     for y in range(HEIGHT):
@@ -333,13 +324,6 @@ def draw_main_screen():
         exit()
 
 # Funkce pro zobrazení obrazovky s výběrem herního módu
-# Funkce pro zobrazení obrazovky s výběrem herního módu - moderní design
-# Funkce pro zobrazení obrazovky s výběrem herního módu - upravený design
-
-
-# Funkce pro zobrazení obrazovky nastavení uživatele
-# Funkce pro zobrazení obrazovky nastavení uživatele - s možností změny nicku
-# Nahradit současnou funkci draw_settings_screen tímto čistějším kódem
 def draw_settings_screen():
     global current_screen
     
@@ -806,7 +790,6 @@ def change_username(new_username):
         current_screen = "settings"
 
 # Modernizovaná funkce pro zobrazení chybové zprávy
-# Modernizovaná funkce pro zobrazení chybové zprávy
 def draw_error_message():
     if pygame.time.get_ticks() - error_time < 3000:  # Zobrazení zprávy na 3 sekundy
         # Příprava textu
@@ -1011,10 +994,6 @@ def load_leaderboard():
     except mysql.connector.Error as err:
         print(f"Chyba při načítání žebříčku: {err}")
 
-# Funkce pro zobrazení žebříčku - moderní design
-# Funkce pro zobrazení žebříčku - vylepšená pro lepší využití prostoru
-# Funkce pro zobrazení žebříčku - vylepšená s fixním tipem
-# Funkce pro zobrazení žebříčku - vrácená do čistého designu
 def draw_leaderboard_screen():
     # Pozadí s gradientem
     for y in range(HEIGHT):
@@ -1183,11 +1162,6 @@ def get_level_parameters(level):
     
     return params
 
-# Funkce pro spuštění hry s moderním designem
-# Funkce pro spuštění hry s moderním designem - upravená pro lepší využití prostoru ve fullscreenu
-# Funkce pro spuštění hry s moderním designem - s fixním počtem buněk
-# Funkce pro spuštění hry s moderním designem - opravená
-# Funkce pro spuštění hry s moderním designem - s většími buňkami
 def start_game(mode):
     global current_screen, error_message, error_time, WIDTH, HEIGHT
     current_screen = "game"
@@ -1927,8 +1901,6 @@ def start_game(mode):
                     current_screen = "game_mode"
 
             # Tlačítko pro zobrazení žebříčku - umístěno doprostřed karty, pod hlavními tlačítky
-            # OPRAVENO: snížení velikosti tlačítka a centrování uvnitř karty
-            # Tlačítko pro zobrazení žebříčku - umístěno doprostřed karty, pod hlavními tlačítky
             leaderboard_button_y = buttons_y + 70
             leaderboard_button_width = card_width - 40  # Šířka tlačítka přes celou kartu s odsazením
 
@@ -1984,8 +1956,6 @@ def toggle_fullscreen():
     if current_screen == "game":
         current_screen = "game_mode"
 
-# Hlavní herní smyčka
-# Hlavní herní smyčka
 # Upravená hlavní herní smyčka, která zajistí kontinuální vykreslování
 def main_loop():
     global input_text_value, input_active, current_screen, error_message, error_time, input_callback, WIDTH, HEIGHT, screen
