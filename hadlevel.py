@@ -480,7 +480,7 @@ def draw_game_mode_screen():
             start_game("levels")
     else:
         # Pokud uživatel není přihlášen, zobrazíme neaktivní tlačítko s upozorněním
-        button_text = "Pro hraní se přihlašte"
+        button_text = "Nutné přihlášení"
         button_rect = pygame.Rect(box_x + box_width//2 - 100, level_y, 200, 50)
         pygame.draw.rect(screen, (80, 80, 90), button_rect, border_radius=10)
         
